@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace GeoCacheCodingEx.Data.Models
 {
     public class GeoCache
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public int Latitude { get; set; }
-        public int Longitude { get; set; }
+        [Key]
+        public int GeocacheId { get; set; }
+        public string GeocacheName { get; set; }
+        public string GeocacheLatitude { get; set; }
+        public string GeocacheLongitude { get; set; }
         
         public virtual ICollection<GeoCacheItem> Items { get; set; }
 
