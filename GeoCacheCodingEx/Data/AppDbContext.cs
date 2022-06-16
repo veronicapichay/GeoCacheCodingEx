@@ -5,6 +5,8 @@ namespace GeoCacheCodingEx.Data
 {
     public class AppDbContext : DbContext
     {
+      
+
         public AppDbContext(DbContextOptions<AppDbContext> options): base (options)
         {
          
@@ -18,7 +20,7 @@ namespace GeoCacheCodingEx.Data
         protected override void OnModelCreating (ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<Geocaches>().HasData(
+            modelBuilder.Entity<GeoCache>().HasData(
 
               new GeoCache
               {
@@ -28,11 +30,20 @@ namespace GeoCacheCodingEx.Data
                   GeocacheLongitude = "-122.300853"
 
 
-              }
+              },
 
+              new GeoCache
+              {
+                  GeocacheId = 2,
+                  GeocacheName = "Find me if you can",
+                  GeocacheLatitude = "35.3252449",
+                  GeocacheLongitude = "-120.6975174"
+
+
+              }
                 );
 
-            modelBuilder.Entity<GeoCacheItems>().HasData(
+            modelBuilder.Entity<GeoCacheItem>().HasData(
 
               new GeoCacheItem
               {
@@ -40,11 +51,41 @@ namespace GeoCacheCodingEx.Data
                   GeocacheItemName = "Rubix Cube",
                   GeocacheId = 1,
                   GeocacheItemIsActive = true,
-                  GeocacheItemActiveDates = "1/22/2022 - 2/2/2022",
+                  GeocacheItemActiveDates = "1/22/2022 - 6/29/2022",
                                
                                
-              }
-                 
+              },
+              new GeoCacheItem
+              {
+                   GeocacheItemId = 2,
+                   GeocacheItemName = "Magic Cards",
+                   GeocacheId = 1,
+                   GeocacheItemIsActive = true,
+                   GeocacheItemActiveDates = "1/22/2022 - 6/29/2022",
+
+
+               },
+
+              new GeoCacheItem
+              {
+                   GeocacheItemId = 3,
+                   GeocacheItemName = "Speaker",
+                   GeocacheId = 1,
+                   GeocacheItemIsActive = false,
+                   GeocacheItemActiveDates = "1/22/2022 - 4/1/2022",
+
+
+              },
+              new GeoCacheItem
+              {
+                   GeocacheItemId = 4,
+                   GeocacheItemName = "Earplugs",
+                   GeocacheId = 2,
+                   GeocacheItemIsActive = false,
+                   GeocacheItemActiveDates = "1/22/2022 - 2/1/2022",
+
+
+               }
                  );
 
         }

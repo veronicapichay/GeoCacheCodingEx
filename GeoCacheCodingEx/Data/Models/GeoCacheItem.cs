@@ -6,7 +6,7 @@ namespace GeoCacheCodingEx.Data.Models
     public class GeoCacheItem
     {
 
-
+        [Key]
         public int GeocacheItemId { get; set; }
 
         [Required]
