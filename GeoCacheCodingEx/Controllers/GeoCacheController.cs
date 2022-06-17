@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace GeoCacheCodingEx.Controllers
 {
@@ -21,15 +22,29 @@ namespace GeoCacheCodingEx.Controllers
 
          }
 
-
-        [HttpGet]
-        public async Task <IEnumerable<GeoCacheItem>> GetGeoCacheItems()
+        [HttpGet("/geocachin/allitems")]
+        public async Task<IEnumerable<GeoCacheItem>> GetAllItems()
         {
 
             return await geocache.GeocacheItems.ToListAsync<GeoCacheItem>();
-            
 
         }
+
+
+        //get active list 
+        [HttpGet("/geocahing/activeitems")]
+        public async Task <IEnumerable<GeoCacheItem>> GetActiveItems()
+        {
+            
+            return await geocache.GeocacheItems.Where(items => items.GeocacheItemIsActive).ToListAsync();
+
+        }
+
+       
+
+
+
+
 
 
 
