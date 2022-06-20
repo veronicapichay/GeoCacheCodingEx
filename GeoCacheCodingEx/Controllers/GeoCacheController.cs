@@ -16,12 +16,12 @@ namespace GeoCacheCodingEx.Controllers
     {
         private AppDbContext geocache;
 
-        public GeoCacheController (AppDbContext appdbcontext)
+        public GeoCacheController(AppDbContext appdbcontext)
         {
             geocache = appdbcontext;
 
 
-         }
+        }
 
         [HttpGet("/api/allitems")]
         public async Task<IEnumerable<GeoCacheItem>> GetAllItems()
@@ -34,41 +34,46 @@ namespace GeoCacheCodingEx.Controllers
 
         //path to get active items  
         [HttpGet("/api/activeitems")]
-        public async Task <IEnumerable<GeoCacheItem>> GetActiveItems()
+        public async Task<IEnumerable<GeoCacheItem>> GetActiveItems()
         {
-            
+
             return await geocache.GeocacheItems.Where(items => items.GeocacheItemIsActive).ToListAsync();
 
         }
 
         [HttpPost]
-        public async Task<ActionResult<GeoCacheItem>> AddItem(GeoCacheItem geoCacheitem)
+        public async Task<ActionResult<GeoCache>> PostItem(GeoCache cache)
         {
-            //checks for name's uniqueness
-            if (IsUnique  (geoCacheitem.GeocacheItemName))
-                return BadRequest("Item name already exist.");
 
-
-            if ((await geocache.GeocacheItems.CountAsync(items => items.GeocacheItemId == geoCacheitem.GeocacheItemId)) < 3)
-                geocache.GeocacheItems.Add(geoCacheitem);
+            geocache.Geocaches.Add(cache);
             await geocache.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetActiveItems), new { id = cache.GeocacheId }, cache);
 
-            return CreatedAtAction("GetActiveItems", new { id = geoCacheitem.GeocacheItemId }, geoCacheitem);
-            //return Ok(geoCache);
+
+
 
         }
 
-        //method to see if name is already exist 
-        private bool IsUnique (string input)
-        {
-            return geocache.GeocacheItems.Any(name => string.Compare(input, name.GeocacheItemName, true) == 0);
-        }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
         //[HttpPut("{id}/update/{}")]
-       
+        //allow an item to be moved from one geocache to another.
+        //Only active items should be allowed to be moved, and items cannot be moved to a geocache that already contains 3 or more items.
+
 
 
     }
