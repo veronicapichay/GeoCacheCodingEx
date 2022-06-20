@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System;
 
 namespace GeoCacheCodingEx.Controllers
 {
@@ -22,7 +23,7 @@ namespace GeoCacheCodingEx.Controllers
 
          }
 
-        [HttpGet("/geocachin/allitems")]
+        [HttpGet("/api/allitems")]
         public async Task<IEnumerable<GeoCacheItem>> GetAllItems()
         {
 
@@ -31,8 +32,8 @@ namespace GeoCacheCodingEx.Controllers
         }
 
 
-        //get active list 
-        [HttpGet("/geocahing/activeitems")]
+        //path to get active items  
+        [HttpGet("/api/activeitems")]
         public async Task <IEnumerable<GeoCacheItem>> GetActiveItems()
         {
             
@@ -40,12 +41,34 @@ namespace GeoCacheCodingEx.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<ActionResult<GeoCacheItem>> AddItem(GeoCacheItem geoCacheitem)
+        {
+            //checks for name's uniqueness
+            if (IsUnique  (geoCacheitem.GeocacheItemName))
+                return BadRequest("Item name already exist.");
+
+
+            if ((await geocache.GeocacheItems.CountAsync(items => items.GeocacheItemId == geoCacheitem.GeocacheItemId)) < 3)
+                geocache.GeocacheItems.Add(geoCacheitem);
+            await geocache.SaveChangesAsync();
+
+            return CreatedAtAction("GetActiveItems", new { id = geoCacheitem.GeocacheItemId }, geoCacheitem);
+            //return Ok(geoCache);
+
+        }
+
+        //method to see if name is already exist 
+        private bool IsUnique (string input)
+        {
+            return geocache.GeocacheItems.Any(name => string.Compare(input, name.GeocacheItemName, true) == 0);
+        }
+
+
+
+
+        //[HttpPut("{id}/update/{}")]
        
-
-
-
-
-
 
 
     }
