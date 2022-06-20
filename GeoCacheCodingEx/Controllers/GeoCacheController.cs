@@ -20,7 +20,6 @@ namespace GeoCacheCodingEx.Controllers
         {
             geocache = appdbcontext;
 
-
         }
 
         [HttpGet("/api/allitems")]
@@ -31,7 +30,6 @@ namespace GeoCacheCodingEx.Controllers
 
         }
 
-
         //path to get active items  
         [HttpGet("/api/activeitems")]
         public async Task<IEnumerable<GeoCacheItem>> GetActiveItems()
@@ -41,8 +39,8 @@ namespace GeoCacheCodingEx.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<ActionResult<GeoCache>> PostItem(GeoCache cache)
+        [HttpPost("/api/additems")]
+        public async Task<ActionResult<GeoCache>> AddItem (GeoCache cache)
         {
 
             geocache.Geocaches.Add(cache);
@@ -50,30 +48,40 @@ namespace GeoCacheCodingEx.Controllers
             return CreatedAtAction(nameof(GetActiveItems), new { id = cache.GeocacheId }, cache);
 
 
-
-
         }
 
+        [HttpPut("{id}/move/{GeoCacheItemName}")]
+        public async Task<IActionResult> MoveItem (int id, int geocacheId)
+        {
+            var item = geocache.GeocacheItems.Find(id);
 
+            //checks if input id exists 
+            if (item == null)
+                return BadRequest("Cannot find Geocache item id.");
 
+            //checks if item is currently active 
+            if (item.GeocacheItemIsActive == false )  
+                return BadRequest("Item must be active.");   
 
+            var geoCache = geocache.Geocaches.Find(geocacheId);
 
+            //checks if input id exists 
+            if (geocache == null)
+                return BadRequest("Geocache id does not exist.");
 
+            //checks if geocache is currently full
+            if ((await geocache.GeocacheItems.CountAsync(i => i.GeocacheId == geocacheId)) >= 3)
+                return BadRequest("Please pick a different Geocache. This is currently full.");
 
+            item.GeocacheId = geocacheId;
+            await geocache.SaveChangesAsync();
+            return Ok();
+        }
 
-
-
-
-
-
-
-
-
-
-        //[HttpPut("{id}/update/{}")]
-        //allow an item to be moved from one geocache to another.
-        //Only active items should be allowed to be moved, and items cannot be moved to a geocache that already contains 3 or more items.
-
+        private bool IsUnique(string input)
+        {
+            return geocache.GeocacheItems.Any(items => string.Compare(input, items.GeocacheItemName, true) == 0);
+        }
 
 
     }
